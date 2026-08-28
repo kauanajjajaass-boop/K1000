@@ -114,11 +114,13 @@
     <div class="grid" id="grid-series"></div>
 
     <script>
+        // Suas chaves fornecidas cadastradas corretamente
         var apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
+        var readToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ZjNiYWNjOWMwOGY1M2QxYWFkYzg3NzI2Y2M4N2Q0MCIsIm5iZiI6MTc4Nzg5MjgzOC4yMjMsInN1YiI6IjZhOTExNDY2ZDdhNTAwOGRmNmMyODEzYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BKPWjN-qvp1e2EPvYMO2BF-wQsEjmFBmiqGfLZxpH70';
         
-        var urlPopulares = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
-        var urlLancamentos = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
-        var urlSeries = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
+        var urlPopulares = 'https://themoviedb.org';
+        var urlLancamentos = 'https://themoviedb.org';
+        var urlSeries = 'https://themoviedb.org';
 
         function darPlay(id, tipo) {
             var urlEmbed = (tipo === 'tv') 
@@ -131,6 +133,11 @@
         function carregarDadosTV(url, elementoId, loadId, tipo) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
+            
+            // Injeta o Token de Acesso necessário para autenticar com o TMDB de forma segura
+            xhr.setRequestHeader('Authorization', 'Bearer ' + readToken);
+            xhr.setRequestHeader('accept', 'application/json');
+            
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     var loadEl = document.getElementById(loadId);
@@ -160,15 +167,19 @@
                                 container.appendChild(card);
                             })();
                         }
+                    } else {
+                        console.error('Erro na requisição: ' + xhr.status);
                     }
                 }
             };
             xhr.send();
         }
 
+        // Inicializa as chamadas
         carregarDadosTV(urlPopulares, 'grid-populares', 'load-populares', 'movie');
         carregarDadosTV(urlLancamentos, 'grid-lancamentos', 'load-lancamentos', 'movie');
         carregarDadosTV(urlSeries, 'grid-series', 'load-series', 'tv');
     </script>
 </body>
-</html>
+        </html>
+    
