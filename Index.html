@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Catálogo de TV e Filmes</title>
+    <style>
+        body { background-color: #111; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        h1 { color: #ff3b30; font-size: 24px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 10px; }
+        .card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 10px; cursor: pointer; text-decoration: none; color: white; }
+        .card:focus, .card:hover { border-color: #ff3b30; background: #333; outline: none; } /* Essencial para o controle remoto da TV */
+        .player-container { margin: 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <h1>📺 Meu Catálogo de Streaming</h1>
+
+    <!-- Player de Vídeo Principal -->
+    <div class="player-container">
+        <iframe id="tv-player" src="" allowfullscreen></iframe>
+    </div>
+
+    <h3>Canais e Filmes</h3>
+    <div class="grid">
+        <!-- Você muda o link no 'mudarCanal' para o link do seu embed -->
+        <button class="card" onclick="mudarCanal('URL_DO_EMBED_AQUI')">📺 Canal Aberto 1</button>
+        <button class="card" onclick="mudarCanal('URL_DO_EMBED_DE_FILME')">🎬 Filme Exemplo</button>
+    </div>
+
+    <script>
+        function mudarCanal(url) {
+            document.getElementById('tv-player').src = url;
+        }
+    </script>
+</body>
+          </html>
+          
