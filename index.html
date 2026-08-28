@@ -3,100 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineCatálogo TV</title>
+    <title>CineCatálogo Premium</title>
     <style>
-        body { background-color: #080808; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        h1 { color: #e50914; font-size: 24px; text-align: center; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
-        h2 { color: #ccc; font-size: 16px; margin-top: 30px; border-left: 4px solid #e50914; padding-left: 10px; }
-        
-        /* Player de Vídeo Fixo */
-        .player-container { margin: 0 auto 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); border-radius: 4px; }
+        body { 
+            background-color: #0d0d0d; 
+            color: #ffffff; 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+        }
+        h1 { 
+            color: #e50914; 
+            font-size: 26px; 
+            text-align: center; 
+            margin: 10px 0 5px 0;
+            text-transform: uppercase;
+        }
+        .subtitle { 
+            text-align: center; 
+            color: #777; 
+            font-size: 12px; 
+            margin-bottom: 20px; 
+        }
+        h2 { 
+            color: #e5e5e5; 
+            font-size: 16px; 
+            margin: 30px 0 10px 0; 
+            border-left: 4px solid #e50914; 
+            padding-left: 10px;
+            text-transform: uppercase;
+        }
+        .player-container { 
+            margin: 0 auto 20px auto; 
+            max-width: 800px; 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 6px;
+            border: 1px solid #222;
+        }
         iframe { width: 100%; height: 100%; border: none; }
-
-        /* Grade de Conteúdo */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 10px 0; }
-        
-        /* Cards de Filmes e Séries */
-        .card { background: #141414; border: 2px solid transparent; border-radius: 6px; overflow: hidden; cursor: pointer; transition: 0.15s; text-align: center; padding-bottom: 6px; width: 100%; }
-        .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-        .card-title { font-size: 11px; padding: 6px 4px 2px 4px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .card-info { font-size: 9px; color: #ffbc00; }
-        
-        /* Controle Remoto Samsung (Foco) */
-        .card:focus, .card:hover { border-color: #e50914; background: #222; transform: scale(1.06); outline: none; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 12px; 
+            padding: 5px 0; 
+        }
+        .card { 
+            background: #181818; 
+            border: 2px solid #252525; 
+            border-radius: 6px; 
+            overflow: hidden; 
+            cursor: pointer; 
+            padding: 0 0 8px 0; 
+            width: 100%;
+            text-align: center;
+        }
+        .card img { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+            display: block; 
+        }
+        .card-title { 
+            font-size: 11px; 
+            padding: 6px 4px 2px 4px; 
+            font-weight: bold; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            color: #fff; 
+        }
+        .card-info { 
+            font-size: 10px; 
+            color: #ffb400; 
+        }
+        .loading {
+            text-align: center;
+            color: #555;
+            font-size: 13px;
+            padding: 10px;
+        }
+        .card:focus, .card:hover { 
+            border-color: #e50914; 
+            background: #282828; 
+            transform: scale(1.05); 
+            outline: none; 
+        }
     </style>
 </head>
 <body>
 
-    <h1>🎬 CineCatálogo TV</h1>
-    <div class="subtitle">Filmes e Séries em Tempo Real</div>
+    <h1>🎬 CineCatálogo</h1>
+    <div class="subtitle">Pronto para Smart TV</div>
 
-    <!-- Player Principal -->
     <div class="player-container">
         <iframe id="main-player" src="about:blank" allowfullscreen></iframe>
     </div>
 
-    <!-- Seções Automáticas -->
-    <h2>🔥 Filmes Mais Populares</h2>
+    <h2>🔥 Filmes Populares</h2>
+    <div class="loading" id="load-populares">Carregando...</div>
     <div class="grid" id="grid-populares"></div>
 
-    <h2>✨ Lançamentos no Cinema</h2>
+    <h2>✨ Lançamentos</h2>
+    <div class="loading" id="load-lancamentos">Carregando...</div>
     <div class="grid" id="grid-lancamentos"></div>
 
-    <h2>📺 Séries Populares</h2>
+    <h2>📺 Séries</h2>
+    <div class="loading" id="load-series">Carregando...</div>
     <div class="grid" id="grid-series"></div>
 
     <script>
-        const apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
+        var apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
         
-        // Links da API do TMDB
-        const urlPopulares = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
-        const urlLancamentos = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
-        const urlSeries = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
+        var urlPopulares = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
+        var urlLancamentos = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
+        var urlSeries = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
 
-        // Dá o play no player (Diferencia filme de série pelo tipo)
         function darPlay(id, tipo) {
-            const urlEmbed = tipo === 'tv' 
-                ? `https://embed.su{id}` 
-                : `https://embed.su{id}`;
-                
+            var urlEmbed = (tipo === 'tv') 
+                ? 'https://embed.su' + id 
+                : 'https://embed.su' + id;
             document.getElementById('main-player').src = urlEmbed;
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // Função genérica para carregar os itens na tela
-        async function carregarSecao(url, elementoId, tipo) {
-            try {
-                const resposta = await fetch(url);
-                const dados = await resposta.json();
-                const container = document.getElementById(elementoId);
-
-                dados.results.forEach(item => {
-                    const titulo = item.title || item.name; // Filme usa 'title', Série usa 'name'
-                    const card = document.createElement('button');
-                    card.className = 'card';
-                    card.onclick = () => darPlay(item.id, tipo);
+        function carregarDadosTV(url, elementoId, loadId, tipo) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var loadEl = document.getElementById(loadId);
+                    if (loadEl) loadEl.style.display = 'none';
                     
-                    const imagemUrl = item.poster_path ? `https://tmdb.org{item.poster_path}` : 'https://placeholder.com';
+                    if (xhr.status === 200) {
+                        var dados = JSON.parse(xhr.responseText);
+                        var container = document.getElementById(elementoId);
+                        if (!dados.results) return;
 
-                    card.innerHTML = `
-                        <img src="${imagemUrl}" alt="${titulo}">
-                        <div class="card-title">${titulo}</div>
-                        <div class="card-info">★ ${item.vote_average.toFixed(1)}</div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (erro) {
-                console.error("Erro ao carregar a seção:", erro);
-            }
+                        for (var i = 0; i < dados.results.length; i++) {
+                            (function() {
+                                var item = dados.results[i];
+                                var titulo = item.title || item.name;
+                                var id = item.id;
+                                var card = document.createElement('button');
+                                card.className = 'card';
+                                card.onclick = function() { darPlay(id, tipo); };
+                                
+                                var imagemUrl = item.poster_path 
+                                    ? 'https://tmdb.org' + item.poster_path 
+                                    : 'https://placeholder.com';
+
+                                card.innerHTML = '<img src="' + imagemUrl + '" alt="' + titulo + '">' +
+                                                 '<div class="card-title">' + titulo + '</div>' +
+                                                 '<div class="card-info">★ ' + (item.vote_average ? item.vote_average.toFixed(1) : '0.0') + '</div>';
+                                container.appendChild(card);
+                            })();
+                        }
+                    }
+                }
+            };
+            xhr.send();
         }
 
-        // Carrega todas as listas ao iniciar
-        carregarSecao(urlPopulares, 'grid-populares', 'movie');
-        carregarSecao(urlLancamentos, 'grid-lancamentos', 'movie');
-        carregarSecao(urlSeries, 'grid-series', 'tv');
+        carregarDadosTV(urlPopulares, 'grid-populares', 'load-populares', 'movie');
+        carregarDadosTV(urlLancamentos, 'grid-lancamentos', 'load-lancamentos', 'movie');
+        carregarDadosTV(urlSeries, 'grid-series', 'load-series', 'tv');
     </script>
 </body>
-    </html>
-    
+</html>
