@@ -5,81 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineCatálogo TV</title>
     <style>
-        body { background-color: #0a0a0a; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        h1 { color: #e50914; font-size: 26px; text-align: center; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
-        h2 { color: #aaa; font-size: 18px; margin-top: 30px; border-left: 4px solid #e50914; padding-left: 10px; }
+        body { background-color: #080808; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        h1 { color: #e50914; font-size: 24px; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
+        h2 { color: #ccc; font-size: 16px; margin-top: 30px; border-left: 4px solid #e50914; padding-left: 10px; }
         
-        /* Player de Vídeo */
-        .player-container { margin: 0 auto 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        /* Player de Vídeo Fixo */
+        .player-container { margin: 0 auto 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); border-radius: 4px; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* Grid de Filmes */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 10px 0; }
+        /* Grade de Conteúdo */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 10px 0; }
         
-        /* Cards dos Filmes */
-        .card { background: #141414; border: 2px solid transparent; border-radius: 6px; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: center; padding-bottom: 8px; width: 100%; }
-        .card img { width: 100%; height: 195px; object-fit: cover; display: block; }
-        .card-title { font-size: 12px; padding: 8px 5px 3px 5px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .card-info { font-size: 10px; color: #ffbc00; }
+        /* Cards de Filmes e Séries */
+        .card { background: #141414; border: 2px solid transparent; border-radius: 6px; overflow: hidden; cursor: pointer; transition: 0.15s; text-align: center; padding-bottom: 6px; width: 100%; }
+        .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .card-title { font-size: 11px; padding: 6px 4px 2px 4px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .card-info { font-size: 9px; color: #ffbc00; }
         
-        /* Navegação por controle remoto da TV Samsung */
-        .card:focus, .card:hover { border-color: #e50914; background: #222; transform: scale(1.05); outline: none; }
+        /* Controle Remoto Samsung (Foco) */
+        .card:focus, .card:hover { border-color: #e50914; background: #222; transform: scale(1.06); outline: none; }
     </style>
 </head>
 <body>
 
-    <h1>🎬 CineCatálogo</h1>
-    <div class="subtitle">Versão leve para Smart TV</div>
+    <h1>🎬 CineCatálogo TV</h1>
+    <div class="subtitle">Filmes e Séries em Tempo Real</div>
 
-    <!-- Player de Vídeo Principal -->
+    <!-- Player Principal -->
     <div class="player-container">
         <iframe id="main-player" src="about:blank" allowfullscreen></iframe>
     </div>
 
-    <!-- Seções de Filmes -->
-    <h2>🔥 Filmes em Destaque</h2>
-    <div class="grid" id="lista-filmes"></div>
+    <!-- Seções Automáticas -->
+    <h2>🔥 Filmes Mais Populares</h2>
+    <div class="grid" id="grid-populares"></div>
+
+    <h2>✨ Lançamentos no Cinema</h2>
+    <div class="grid" id="grid-lancamentos"></div>
+
+    <h2>📺 Séries Populares</h2>
+    <div class="grid" id="grid-series"></div>
 
     <script>
-        // Função para iniciar o player ao clicar no filme
-        function darPlay(idFilme) {
-            // Player público baseado na ID do TMDB
-            const urlEmbed = `https://embed.su{idFilme}`; 
+        const apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
+        
+        // Links da API do TMDB
+        const urlPopulares = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
+        const urlLancamentos = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
+        const urlSeries = `https://themoviedb.org{apiKey}&language=pt-BR&page=1`;
+
+        // Dá o play no player (Diferencia filme de série pelo tipo)
+        function darPlay(id, tipo) {
+            const urlEmbed = tipo === 'tv' 
+                ? `https://embed.su{id}` 
+                : `https://embed.su{id}`;
+                
             document.getElementById('main-player').src = urlEmbed;
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // Carrega uma lista real e pública de filmes estáveis do TMDB sem precisar de chave de API
-        async function carregarCatalogo() {
+        // Função genérica para carregar os itens na tela
+        async function carregarSecao(url, elementoId, tipo) {
             try {
-                // Utilizando um endpoint alternativo de demonstração pública do TMDB para testes rápidos
-                const resposta = await fetch('https://themoviedb.org');
+                const resposta = await fetch(url);
                 const dados = await resposta.json();
-                const container = document.getElementById('lista-filmes');
+                const container = document.getElementById(elementoId);
 
-                dados.results.forEach(filme => {
+                dados.results.forEach(item => {
+                    const titulo = item.title || item.name; // Filme usa 'title', Série usa 'name'
                     const card = document.createElement('button');
                     card.className = 'card';
-                    card.onclick = () => darPlay(filme.id);
+                    card.onclick = () => darPlay(item.id, tipo);
                     
-                    const imagemUrl = filme.poster_path ? `https://tmdb.org{filme.poster_path}` : 'https://placeholder.com';
+                    const imagemUrl = item.poster_path ? `https://tmdb.org{item.poster_path}` : 'https://placeholder.com';
 
                     card.innerHTML = `
-                        <img src="${imagemUrl}" alt="${filme.title}">
-                        <div class="card-title">${filme.title}</div>
-                        <div class="card-info">★ ${filme.vote_average.toFixed(1)}</div>
+                        <img src="${imagemUrl}" alt="${titulo}">
+                        <div class="card-title">${titulo}</div>
+                        <div class="card-info">★ ${item.vote_average.toFixed(1)}</div>
                     `;
                     container.appendChild(card);
                 });
             } catch (erro) {
-                console.error("Erro ao carregar os filmes: ", erro);
+                console.error("Erro ao carregar a seção:", erro);
             }
         }
 
-        // Inicia o carregamento assim que a página abre na TV
-        carregarCatalogo();
+        // Carrega todas as listas ao iniciar
+        carregarSecao(urlPopulares, 'grid-populares', 'movie');
+        carregarSecao(urlLancamentos, 'grid-lancamentos', 'movie');
+        carregarSecao(urlSeries, 'grid-series', 'tv');
     </script>
 </body>
-  </html>
-  
+    </html>
+    
