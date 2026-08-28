@@ -3,102 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineCatálogo TV</title>
+    <title>CineCatálogo Debug</title>
     <style>
         body { background-color: #0d0d0d; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        h1 { color: #e50914; font-size: 26px; text-align: center; margin: 10px 0 5px 0; text-transform: uppercase; }
-        .subtitle { text-align: center; color: #777; font-size: 12px; margin-bottom: 20px; }
-        h2 { color: #e5e5e5; font-size: 16px; margin: 30px 0 10px 0; border-left: 4px solid #e50914; padding-left: 10px; text-transform: uppercase; }
-        .player-container { margin: 0 auto 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 6px; border: 1px solid #222; }
-        iframe { width: 100%; height: 100%; border: none; }
+        h1 { color: #e50914; font-size: 24px; text-align: center; }
+        .debug-box { background: #300; color: #f88; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 12px; white-space: pre-wrap; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 5px 0; }
         .card { background: #181818; border: 2px solid #252525; border-radius: 6px; overflow: hidden; cursor: pointer; padding: 0 0 8px 0; width: 100%; text-align: center; }
         .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
         .card-title { font-size: 11px; padding: 6px 4px 2px 4px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
         .card-info { font-size: 10px; color: #ffb400; }
-        .loading { text-align: center; color: #777; font-size: 13px; padding: 10px; }
-        .card:focus, .card:hover { border-color: #e50914; background: #282828; transform: scale(1.05); outline: none; }
     </style>
 </head>
 <body>
 
-    <h1>🎬 CineCatálogo</h1>
-    <div class="subtitle">Modo Compatível TV</div>
-
-    <div class="player-container">
-        <iframe id="main-player" src="about:blank" allowfullscreen></iframe>
-    </div>
+    <h1>🎬 CineCatálogo - Teste de Erro</h1>
+    <!-- Caixa onde o erro vai aparecer se algo falhar -->
+    <div class="debug-box" id="tela-erro">Iniciando teste de conexão...</div>
 
     <h2>🔥 Filmes Populares</h2>
-    <div class="loading" id="load-populares">Carregando...</div>
     <div class="grid" id="grid-populares"></div>
-
-    <h2>✨ Lançamentos</h2>
-    <div class="loading" id="load-lancamentos">Carregando...</div>
-    <div class="grid" id="grid-lancamentos"></div>
-
-    <h2>📺 Séries</h2>
-    <div class="loading" id="load-series">Carregando...</div>
-    <div class="grid" id="grid-series"></div>
 
     <script>
         var apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
-        
-        // URLs usando api_key diretamente para burlar restrições de CORS
         var urlPopulares = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
-        var urlLancamentos = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
-        var urlSeries = 'https://themoviedb.org' + apiKey + '&language=pt-BR&page=1';
 
-        function darPlay(id, tipo) {
-            var urlEmbed = (tipo === 'tv') 
-                ? 'https://embed.su' + id 
-                : 'https://embed.su' + id;
-            document.getElementById('main-player').src = urlEmbed;
-            window.scrollTo({top: 0, behavior: 'smooth'});
+        function mostrarErro(texto) {
+            document.getElementById('tela-erro').innerText = texto;
         }
 
-        function carregarDadosTV(url, elementoId, loadId, tipo) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    var loadEl = document.getElementById(loadId);
-                    if (loadEl) loadEl.style.display = 'none';
-                    
-                    if (xhr.status === 200) {
-                        var dados = JSON.parse(xhr.responseText);
-                        var container = document.getElementById(elementoId);
-                        if (!dados.results) return;
-
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', urlPopulares, true);
+        
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                try {
+                    var dados = JSON.parse(xhr.responseText);
+                    if (dados.results && dados.results.length > 0) {
+                        document.getElementById('tela-erro').style.display = 'none'; // Sumir caixa se der certo
+                        var container = document.getElementById('grid-populares');
+                        
                         for (var i = 0; i < dados.results.length; i++) {
-                            (function() {
-                                var item = dados.results[i];
-                                var titulo = item.title || item.name;
-                                var id = item.id;
-                                var card = document.createElement('button');
-                                card.className = 'card';
-                                card.onclick = function() { darPlay(id, tipo); };
-                                
-                                var imagemUrl = item.poster_path 
-                                    ? 'https://tmdb.org' + item.poster_path 
-                                    : 'https://placeholder.com';
-
-                                card.innerHTML = '<img src="' + imagemUrl + '" alt="' + titulo + '">' +
-                                                 '<div class="card-title">' + titulo + '</div>' +
-                                                 '<div class="card-info">★ ' + (item.vote_average ? item.vote_average.toFixed(1) : '0.0') + '</div>';
-                                container.appendChild(card);
-                            })();
+                            var item = dados.results[i];
+                            var card = document.createElement('div');
+                            card.className = 'card';
+                            card.innerHTML = '<img src="https://tmdb.org' + item.poster_path + '">' +
+                                             '<div class="card-title">' + item.title + '</div>' +
+                                             '<div class="card-info">★ ' + item.vote_average.toFixed(1) + '</div>';
+                            container.appendChild(card);
                         }
+                    } else {
+                        mostrarErro('A API respondeu, mas não retornou nenhum filme.');
                     }
+                } catch (e) {
+                    mostrarErro('Erro ao ler os dados do TMDB: ' + e.message);
                 }
-            };
-            xhr.send();
-        }
+            } else {
+                mostrarErro('Erro de conexão com o TMDB. Código do erro: ' + xhr.status);
+            }
+        };
 
-        carregarDadosTV(urlPopulares, 'grid-populares', 'load-populares', 'movie');
-        carregarDadosTV(urlLancamentos, 'grid-lancamentos', 'load-lancamentos', 'movie');
-        carregarDadosTV(urlSeries, 'grid-series', 'load-series', 'tv');
+        xhr.onerror = function () {
+            mostrarErro('O navegador bloqueou a requisição de rede (CORS ou Sem Internet).');
+        };
+
+        xhr.send();
     </script>
 </body>
-    </html>
-    
+</html>
