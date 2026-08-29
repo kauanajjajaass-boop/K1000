@@ -3,103 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineCatálogo Premium</title>
+    <title>CineCatálogo TV</title>
     <style>
-        body { background-color: #0d0d0d; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        h1 { color: #e50914; font-size: 26px; text-align: center; margin: 10px 0 5px 0; text-transform: uppercase; }
-        .subtitle { text-align: center; color: #777; font-size: 12px; margin-bottom: 20px; }
-        h2 { color: #e5e5e5; font-size: 16px; margin: 30px 0 10px 0; border-left: 4px solid #e50914; padding-left: 10px; text-transform: uppercase; }
-        .player-container { margin: 0 auto 20px auto; max-width: 800px; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 6px; border: 1px solid #222; }
+        /* Design Premium focado em Smart TVs e Controle Remoto */
+        body { 
+            background-color: #0c0c0c; 
+            color: #ffffff; 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            text-align: center;
+        }
+        h1 { 
+            color: #e50914; 
+            font-size: 26px; 
+            text-transform: uppercase; 
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .subtitle { 
+            color: #666; 
+            font-size: 12px; 
+            margin-bottom: 30px; 
+        }
+        h2 { 
+            color: #e5e5e5; 
+            font-size: 16px; 
+            text-align: left;
+            margin: 30px 0 15px 0; 
+            border-left: 4px solid #e50914; 
+            padding-left: 10px; 
+            text-transform: uppercase; 
+        }
+        
+        /* Player de Vídeo Estável */
+        .player-container { 
+            margin: 0 auto 25px auto; 
+            max-width: 800px; 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 6px; 
+            border: 1px solid #222; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+        }
         iframe { width: 100%; height: 100%; border: none; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 5px 0; }
-        .card { background: #181818; border: 2px solid #252525; border-radius: 6px; overflow: hidden; cursor: pointer; padding: 0 0 8px 0; width: 100%; text-align: center; }
-        .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-        .card-title { font-size: 11px; padding: 6px 4px 2px 4px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .card-info { font-size: 10px; color: #ffb400; }
-        .card:focus, .card:hover { border-color: #e50914; background: #282828; transform: scale(1.05); outline: none; }
+        
+        /* Grid de Navegação */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 15px; 
+            padding: 5px 0; 
+        }
+        
+        /* Estilização dos Cards Interativos */
+        .card { 
+            background: #161616; 
+            border: 2px solid #222; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            cursor: pointer; 
+            padding: 15px 10px; 
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.15s;
+        }
+        .card span {
+            display: block;
+            color: #ffb400;
+            font-size: 11px;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        
+        /* Efeito de Destaque para o Controle da TV Samsung */
+        .card:focus, .card:hover { 
+            border-color: #e50914; 
+            background: #222; 
+            transform: scale(1.05); 
+            outline: none; 
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+        }
     </style>
 </head>
 <body>
 
     <h1>🎬 CineCatálogo</h1>
-    <div class="subtitle">Modo Super Compatível Ativo</div>
+    <div class="subtitle">Plataforma Estática Otimizada para Smart TV</div>
 
+    <!-- Player Fixo de Conteúdo -->
     <div class="player-container">
         <iframe id="main-player" src="about:blank" allowfullscreen></iframe>
     </div>
 
-    <h2>🔥 Filmes Populares</h2>
-    <div class="grid" id="grid-populares"></div>
+    <h2>📺 Canais Gratuitos & Streaming Oficial</h2>
+    <div class="grid">
+        <button class="card" onclick="mudarPlayer('https://pluto.tv')">Pluto TV Brasil<span>Plataforma Grátis</span></button>
+        <button class="card" onclick="mudarPlayer('https://plex.tv')">Plex TV Ao Vivo<span>Canais Globais</span></button>
+        <button class="card" onclick="mudarPlayer('https://youtube.com')">TV Cultura ao Vivo<span>Canal Aberto</span></button>
+    </div>
 
-    <h2>✨ Lançamentos</h2>
-    <div class="grid" id="grid-lancamentos"></div>
-
-    <h2>📺 Séries Populares</h2>
-    <div class="grid" id="grid-series"></div>
+    <h2>🔥 Melhores Filmes & Buscador Automático</h2>
+    <div class="grid">
+        <!-- Você pode expandir essa lista adicionando novas IDs de filmes famosos -->
+        <button class="card" onclick="mudarVideo('550')">Clube da Luta<span>Filme Clássico</span></button>
+        <button class="card" onclick="mudarVideo('27205')">A Origem<span>Ficção Científica</span></button>
+        <button class="card" onclick="mudarVideo('157336')">Interstellar<span>Espetáculo Visual</span></button>
+        <button class="card" onclick="mudarVideo('299536')">Vingadores: Ultimato<span>Ação / Heróis</span></button>
+    </div>
 
     <script>
-        var apiKey = '5f3bacc9c08f53d1aadc87726cc87d40';
-
-        function darPlay(id, tipo) {
-            var urlEmbed = (tipo === 'tv') 
-                ? 'https://embed.su' + id 
-                : 'https://embed.su' + id;
-            document.getElementById('main-player').src = urlEmbed;
+        // Carrega o reprodutor de embeds estável usando IDs estáticas conhecidas
+        function mudarVideo(idFilme) {
+            var urlBase = 'https://embed.su' + idFilme;
+            document.getElementById('main-player').src = urlBase;
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // Função que processa os Filmes Populares
-        function tmdPopulares(dados) {
-            montarGrid(dados, 'grid-populares', 'movie');
+        // Carrega streams e players externos compatíveis
+        function mudarPlayer(urlCompleta) {
+            document.getElementById('main-player').src = urlCompleta;
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
-
-        // Função que processa os Lançamentos
-        function tmdLancamentos(dados) {
-            montarGrid(dados, 'grid-lancamentos', 'movie');
-        }
-
-        // Função que processa as Séries
-        function tmdSeries(dados) {
-            montarGrid(dados, 'grid-series', 'tv');
-        }
-
-        function montarGrid(dados, elementoId, tipo) {
-            var container = document.getElementById(elementoId);
-            if (!dados || !dados.results) return;
-
-            for (var i = 0; i < dados.results.length; i++) {
-                (function() {
-                    var item = dados.results[i];
-                    var titulo = item.title || item.name;
-                    var id = item.id;
-                    
-                    var card = document.createElement('button');
-                    card.className = 'card';
-                    card.onclick = function() { darPlay(id, tipo); };
-                    
-                    var imagemUrl = item.poster_path 
-                        ? 'https://tmdb.org' + item.poster_path 
-                        : 'https://placeholder.com';
-
-                    card.innerHTML = '<img src="' + imagemUrl + '" alt="' + titulo + '">' +
-                                     '<div class="card-title">' + titulo + '</div>' +
-                                     '<div class="card-info">★ ' + (item.vote_average ? item.vote_average.toFixed(1) : '0.0') + '</div>';
-                    container.appendChild(card);
-                })();
-            }
-        }
-
-        // Burlar o CORS criando tags de script dinâmicas (Método JSONP)
-        function injetarScript(url) {
-            var script = document.createElement('script');
-            script.src = url;
-            document.body.appendChild(script);
-        }
-
-        // Faz as chamadas contornando o bloqueio do navegador
-        injetarScript('https://themoviedb.org' + apiKey + '&language=pt-BR&page=1&callback=tmdPopulares');
-        injetarScript('https://themoviedb.org' + apiKey + '&language=pt-BR&page=1&callback=tmdLancamentos');
-        injetarScript('https://themoviedb.org' + apiKey + '&language=pt-BR&page=1&callback=tmdSeries');
     </script>
 </body>
-</html>
+            </html>
+    
